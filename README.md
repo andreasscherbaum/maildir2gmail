@@ -13,10 +13,12 @@ The script in this repository contains a few additional features which I found u
 ## Usage
 
 ```
-./maildir2gmail.py [-f] -u <username> -p <password> <maildirs>
+./maildir2gmail.py [-f] [-n] -u <username> -p <password> <maildirs>
 ```
 
 By default, all mails are uploaded to _All Mail_ in Gmail, following the Google concept of "never delete mails, just archive everything".
 A folder can be specified using the _-f_ option.
+
+Mails can be marked as Unseen (new) using the _n_ option.
 
 Username and Password are required, IMAP for your mailbox must be turned on (do this in the Settings for your mailbox). In addition you have to allow [_less secure apps_](https://support.google.com/accounts/answer/6010255) in your Gmail interface.
