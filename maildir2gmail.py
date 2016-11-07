@@ -16,6 +16,7 @@ class Gmail(object):
     def __init__(self, options):
         self.username = options.username
         self.password = options.password
+        self.new_flag = options.new_flag
         self.folder = options.folder
         if self.folder == 'inbox':
             self.folder = 'INBOX'
@@ -61,7 +62,10 @@ class Gmail(object):
         log('Sending "%s" (%d bytes)' % (subject, len(content)))
         del message
 
-        self.imap.append(self.folder, '(\\Seen)', timestamp, content)
+        if self.new_flag:
+            self.imap.append(self.folder, '()', timestamp, content)
+        else:
+            self.imap.append(self.folder, '(\\Seen)', timestamp, content)
         self.mark_appended(filename)
     
     def check_appended(self, filename):
@@ -136,6 +140,8 @@ def main():
         help='Password to log into Gmail')
     parser.add_option('-u', '--username', dest='username',
         help='Username to log into Gmail')
+    parser.add_option('-n', '--new', dest='new_flag', action = 'store_true',
+        help='Flag all messages as UNSEEN')
 
     options, args = parser.parse_args()
 
