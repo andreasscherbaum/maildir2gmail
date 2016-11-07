@@ -20,7 +20,8 @@ class Gmail(object):
         if self.folder == 'inbox':
             self.folder = 'INBOX'
         else:
-            self.folder = '[Gmail]/%s' % self.folder
+            #self.folder = '[Gmail]/%s' % self.folder
+            self.folder = '%s' % self.folder
 
         self.__database = None
         self.__imap = None
