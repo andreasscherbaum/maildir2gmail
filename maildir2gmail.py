@@ -2,7 +2,7 @@
 
 """Upload email messages from a list of Maildir to Google Mail."""
 
-__version__ = '0.1'
+__version__ = '0.3'
 
 import email
 import email.Header
@@ -10,6 +10,8 @@ import email.Utils
 import os
 import sys
 import time
+import re
+from pprint import pprint
 
 
 class Gmail(object):
@@ -87,11 +89,34 @@ class Gmail(object):
         from imaplib import IMAP4_SSL
         if self.__imap is None:
             if not self.username or not self.password:
-                raise Exception('Username/password not supplied') 
+                raise Exception('Username/password not supplied')
 
             self.__imap = IMAP4_SSL('imap.gmail.com')
             self.__imap.login(self.username, self.password)
             log('Connected to Gmail IMAP')
+
+        # verify if the specified folder exists
+        f = self.__imap.status(self.folder, '(MESSAGES)')
+        if (f[0] == 'OK'):
+            # everything is fine, the folder exists
+            pass
+        elif (f[0] == 'NO'):
+            # the folder does not exist
+            f_p = self.folder.split('/')
+            f_here = ''
+            for f_c in f_p:
+                if (f_here == ''):
+                    f_here = f_c
+                else:
+                    f_here += '/' + f_c
+                # check if this folder exists
+                f2 = self.__imap.status(f_here, '(MESSAGES)')
+                if (f2[0] == 'NO'):
+                    self.__imap.create(f_here)
+                    log("Create mailbox: " + f_here)
+        else:
+            raise Exception('Internal error quering the folder status')
+
         return self.__imap
 
 
@@ -144,6 +169,10 @@ def main():
         help='Flag all messages as UNSEEN')
 
     options, args = parser.parse_args()
+
+    # basic sanity check for folder name
+    if (re.match(r'^[a-zA-Z0-9 \[\]\-_\/]+\Z', options.folder) is None):
+        raise Exception('Invalid folder name')
 
     gmail = Gmail(options)
     for dirname in args:

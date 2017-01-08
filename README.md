@@ -17,7 +17,7 @@ The script in this repository contains a few additional features which I found u
 ```
 
 By default, all mails are uploaded to _All Mail_ in Gmail, following the Google concept of "never delete mails, just archive everything".
-A folder can be specified using the _-f_ option.
+A folder can be specified using the _-f_ option. Non-existent folders will be created automatically.
 
 Mails can be marked as Unseen (new) using the _n_ option.
 
