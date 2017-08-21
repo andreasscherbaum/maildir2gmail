@@ -58,8 +58,7 @@ class Gmail(object):
         timestamp = parsedate(message['date'])
         if not timestamp:
             log('Skipping "%s" - no date' % os.path.basename(filename))
-            timestamp = 0
-#           return
+            return
 
         subject = decode_header(message['subject'])
         log('Sending "%s" (%d bytes)' % (subject, len(content)))
@@ -172,7 +171,7 @@ def main():
     options, args = parser.parse_args()
 
     # basic sanity check for folder name
-    if (re.match(r'^[a-zA-Z0-9 \[\]\-_\/\.]+\Z', options.folder) is None):
+    if (re.match(r'^[a-zA-Z0-9 \[\]\-_\/\.&]+\Z', options.folder) is None):
         raise Exception('Invalid folder name')
 
     gmail = Gmail(options)
