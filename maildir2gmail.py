@@ -69,7 +69,7 @@ class Gmail(object):
         else:
             self.imap.append(self.folder, '(\\Seen)', timestamp, content)
         self.mark_appended(filename)
-    
+
     def check_appended(self, filename):
         return os.path.basename(filename) in self.database
 
@@ -171,7 +171,7 @@ def main():
     options, args = parser.parse_args()
 
     # basic sanity check for folder name
-    if (re.match(r'^[a-zA-Z0-9 \[\]\-_\/]+\Z', options.folder) is None):
+    if (re.match(r'^[a-zA-Z0-9 \[\]\-_\/\.&]+\Z', options.folder) is None):
         raise Exception('Invalid folder name')
 
     gmail = Gmail(options)
@@ -201,3 +201,4 @@ def parsedate(value):
 
 if __name__ == '__main__':
     main()
+
