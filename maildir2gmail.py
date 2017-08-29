@@ -60,7 +60,7 @@ class Gmail(object):
         message = email.message_from_string(content)
         timestamp = parsedate(message['date'])
         fileTimestamp = os.path.getctime(filename)
-	if not self.ignore_missing_date:
+        if not self.ignore_missing_date:
             if not timestamp:
                 log('Skipping "%s" - no date (creation time of file: %s)' % (os.path.basename(filename), datetime.datetime.fromtimestamp(fileTimestamp).strftime('%Y-%m-%d %H:%M:%S')))
                 return
