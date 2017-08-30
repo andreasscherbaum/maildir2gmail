@@ -21,7 +21,7 @@ A folder can be specified using the _-f_ option. Non-existent folders will be cr
 
 Mails can be marked as Unseen (new) using the _-n_ option.
 
-Use option _--ignore-missing-date_ to ignore all messages with missing date. In this case, messages are imported to gmail with the creation date of the file.
+Use option _--ignore-missing-date_ to ignore all messages with missing date. In this case, messages are imported to gmail with the last modification time of the file.
 
 You can set the maximum size for messages with the option _--max-size=MAX_SIZE_ (in bytes). Messages that are larger than the defined size are skipped. Default is 25 MB (Gmail limitation for IMAP).
 
