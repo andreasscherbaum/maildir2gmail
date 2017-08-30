@@ -2,13 +2,14 @@
 
 """Upload email messages from a list of Maildir to Google Mail."""
 
-__version__ = '0.3'
+__version__ = '0.4'
 
 import email
 import email.Header
 import email.Utils
 import os
 import sys
+import datetime
 import time
 import re
 from pprint import pprint
@@ -20,6 +21,8 @@ class Gmail(object):
         self.password = options.password
         self.new_flag = options.new_flag
         self.folder = options.folder
+        self.ignore_missing_date = options.ignore_missing_date
+        self.max_size = options.max_size
         if self.folder == 'inbox':
             self.folder = 'INBOX'
         else:
@@ -56,12 +59,29 @@ class Gmail(object):
 
         message = email.message_from_string(content)
         timestamp = parsedate(message['date'])
-        if not timestamp:
-            log('Skipping "%s" - no date' % os.path.basename(filename))
+        fileTimestamp = os.path.getctime(filename)
+        if not self.ignore_missing_date:
+            if not timestamp:
+                log('Skipping "%s" - no date (creation time of file: %s)' % (os.path.basename(filename), datetime.datetime.fromtimestamp(fileTimestamp).strftime('%Y-%m-%d %H:%M:%S')))
+                return
+        else:
+            timestamp = os.path.getctime(filename)
+
+        if message.is_multipart():
+            message_size = 0
+            for part in message.walk():
+                part_payload = part.get_payload(decode=True)
+                if part_payload:
+                    message_size = message_size + len(part_payload)
+        else:
+            message_size = len(content)
+
+        subject = decode_header(message['subject'])        
+        if message_size > self.max_size:
+            log('Skipping "%s" (subject: "%s") - message too large (max. 25 MB); Size was %d bytes)' % (os.path.basename(filename), subject, len(content)))
             return
 
-        subject = decode_header(message['subject'])
-        log('Sending "%s" (%d bytes)' % (subject, len(content)))
+        log('Sending "%s" (%d bytes)' % (subject, message_size))
         del message
 
         if self.new_flag:
@@ -167,6 +187,10 @@ def main():
         help='Username to log into Gmail')
     parser.add_option('-n', '--new', dest='new_flag', action = 'store_true',
         help='Flag all messages as UNSEEN')
+    parser.add_option('--ignore-missing-date', dest='ignore_missing_date', action='store_true',
+        help='Ignores messages with missing date and sets the file creation time instead')
+    parser.add_option('--max-size', dest='max_size', type="int", default=25000000,
+        help='Defines maximum message size [default: %default bytes]')
 
     options, args = parser.parse_args()
 

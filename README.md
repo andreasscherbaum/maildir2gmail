@@ -13,12 +13,16 @@ The script in this repository contains a few additional features which I found u
 ## Usage
 
 ```
-./maildir2gmail.py [-f] [-n] -u <username> -p <password> <maildirs>
+./maildir2gmail.py [-f] [-n] [--ignore-missing-date] [--max-size=MAX_SIZE] -u <username> -p <password> <maildirs>
 ```
 
 By default, all mails are uploaded to _All Mail_ in Gmail, following the Google concept of "never delete mails, just archive everything".
 A folder can be specified using the _-f_ option. Non-existent folders will be created automatically.
 
-Mails can be marked as Unseen (new) using the _n_ option.
+Mails can be marked as Unseen (new) using the _-n_ option.
+
+Use option _--ignore-missing-date_ to ignore all messages with missing date. In this case, messages are imported to gmail with the last modification time of the file.
+
+You can set the maximum size for messages with the option _--max-size=MAX_SIZE_ (in bytes). Messages that are larger than the defined size are skipped. Default is 25 MB (Gmail limitation for IMAP).
 
 Username and Password are required, IMAP for your mailbox must be turned on (do this in the Settings for your mailbox). In addition you have to allow [_less secure apps_](https://support.google.com/accounts/answer/6010255) in your Gmail interface.
