@@ -98,10 +98,10 @@ class Gmail(object):
 
     @property
     def database(self):
-        import dbhash
         if self.__database is None:
-            dbname = os.path.abspath(os.path.splitext(sys.argv[0])[0] + '.db')
-            self.__database = dbhash.open(dbname, 'w')
+            import shelve
+            dbname = os.path.abspath(os.path.splitext(sys.argv[0])[0])
+            self.__database = shelve.open(dbname)
         return self.__database
 
     @property
